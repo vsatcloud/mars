@@ -1,2 +1,6 @@
 # mars
-vsat go web framework1
+vsat go web framework
+
+```
+go get github.com/vsatcloud/mars
+```
