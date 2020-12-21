@@ -56,8 +56,8 @@ func (c *Context) BindParams(obj interface{}) error {
 }
 
 func (c *Context) ResponseJson() {
-	if c.Result.Msg == "" {
-		c.Result.Msg = CodeMsg[c.Result.Code]
+	if c.Result.Message == "" {
+		c.Result.Message = CodeMsg[c.Result.Code]
 	}
 	c.JSON(http.StatusOK, c.Result)
 }
