@@ -44,10 +44,21 @@ func Init(conf Database) error {
 		return err
 	}
 
+	var modelsList = []interface{}{OperationRecord{}}
+
+	if err = db.AutoMigrate(modelsList...).Error; nil != err {
+		return err
+	}
+
 	db.DB().SetMaxIdleConns(conf.MaxIdleConns)
 	db.DB().SetMaxOpenConns(conf.MaxOpenConns)
 
 	return nil
+}
+
+// LogMode set log mode, `true` for detailed logs, `false` for no log, default, will only print error logs
+func LogMode(enable bool) {
+	db.LogMode(enable)
 }
 
 func CloseDB() error {
