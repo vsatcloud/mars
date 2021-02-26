@@ -72,9 +72,8 @@ func Limit(limit int) int {
 
 //自动构造表结构
 func AutoMigrateModel(values ...interface{}) error {
-	if err := db.AutoMigrate(values).Error; nil != err {
+	if err := db.AutoMigrate(values); nil != err {
 		return err
 	}
-
 	return nil
 }
