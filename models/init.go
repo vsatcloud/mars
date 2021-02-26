@@ -2,9 +2,10 @@ package models
 
 import (
 	"fmt"
-	"os"
 
-	"github.com/jinzhu/gorm"
+	"gorm.io/driver/postgres"
+
+	"gorm.io/gorm"
 )
 
 var (
@@ -22,47 +23,30 @@ type Database struct {
 	MaxOpenConns int    `json:"max_open_conns" required:"true"`
 }
 
-func envDefault(key, defaultKey string) string {
-	value, exists := os.LookupEnv(key)
-	if exists {
-		return value
-	}
-	return defaultKey
-}
-
 func Init(conf Database) error {
 	var err error
 	connStr := fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s sslmode=%s",
-		envDefault("PGDB_HOST", conf.Host),
-		envDefault("PGDB_PORT", conf.Port),
-		envDefault("PGDB_USER", conf.User),
-		envDefault("PGDB_DB_NAME", conf.Dbname),
-		envDefault("PGDB_PASSWORD", conf.Password),
-		conf.Sslmode)
-	db, err = gorm.Open("postgres", connStr)
+		conf.Host, conf.Port, conf.User, conf.Dbname, conf.Password, conf.Sslmode)
+	db, err = gorm.Open(postgres.Open(connStr), &gorm.Config{})
 	if err != nil {
 		return err
 	}
 
 	var modelsList = []interface{}{OperationRecord{}}
 
-	if err = db.AutoMigrate(modelsList...).Error; nil != err {
+	if err = db.AutoMigrate(modelsList...); nil != err {
 		return err
 	}
 
-	db.DB().SetMaxIdleConns(conf.MaxIdleConns)
-	db.DB().SetMaxOpenConns(conf.MaxOpenConns)
+	sqlDB, err := db.DB()
+	if err != nil {
+		return err
+	}
+
+	sqlDB.SetMaxIdleConns(conf.MaxIdleConns)
+	sqlDB.SetMaxOpenConns(conf.MaxOpenConns)
 
 	return nil
-}
-
-// LogMode set log mode, `true` for detailed logs, `false` for no log, default, will only print error logs
-func LogMode(enable bool) {
-	db.LogMode(enable)
-}
-
-func CloseDB() error {
-	return db.Close()
 }
 
 func GetDB() *gorm.DB {
