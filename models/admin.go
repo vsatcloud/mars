@@ -2,7 +2,7 @@ package models
 
 import "gorm.io/gorm"
 
-type UserModel struct {
+type AdminModel struct {
 	gorm.Model
 	Username string `gorm:"type:varchar(128)"` // 用户名
 	Password string `gorm:"type:varchar(128)"` // 密码
