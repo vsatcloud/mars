@@ -2,6 +2,9 @@ package models
 
 import (
 	"fmt"
+	"os"
+
+	"github.com/rs/zerolog/log"
 
 	"gorm.io/driver/postgres"
 
@@ -13,7 +16,7 @@ var (
 )
 
 type Database struct {
-	Host         string `json:"host" required:"true" env:"PGDB_ADDR"`
+	Host         string `json:"host" required:"true" env:"PGDB_HOST"`
 	Port         string `json:"port" required:"true" env:"PGDB_PORT"`
 	User         string `json:"user" required:"true" env:"PGDB_USER"`
 	Dbname       string `json:"dbname" required:"true" env:"PGDB_DB_NAME"`
@@ -23,10 +26,20 @@ type Database struct {
 	MaxOpenConns int    `json:"max_open_conns" required:"true"`
 }
 
+func GetEnvDefault(key, defaultKey string) string {
+	value, exists := os.LookupEnv(key)
+	if exists {
+		return value
+	}
+	return defaultKey
+}
+
 func Init(conf Database) error {
 	var err error
 	connStr := fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s sslmode=%s",
-		conf.Host, conf.Port, conf.User, conf.Dbname, conf.Password, conf.Sslmode)
+		GetEnvDefault("PGDB_HOST", conf.Host), conf.Port, conf.User, conf.Dbname, conf.Password, conf.Sslmode)
+
+	log.Info().Msg(connStr)
 	db, err = gorm.Open(postgres.Open(connStr), &gorm.Config{})
 	if err != nil {
 		return err
