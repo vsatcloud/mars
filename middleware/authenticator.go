@@ -64,8 +64,8 @@ func generateToken(data map[string]interface{}, secret string) (string, error) {
 }
 
 //解析token
-func parseToken(token_string string, secret string) (*jwt.Token, error) {
-	token, err := jwt.Parse(token_string, func(token *jwt.Token) (interface{}, error) {
+func ParseToken(tokenString string, secret string) (*jwt.Token, error) {
+	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		return []byte(secret), nil
 	})
 	if err == nil && token.Valid {
