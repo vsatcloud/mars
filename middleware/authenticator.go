@@ -37,7 +37,7 @@ func (j *Auth) Authenticator() gin.HandlerFunc {
 
 		token := strings.Split(tokenBearer, " ")[1]
 
-		jwtT, err := parseToken(token, j.TokenSecret)
+		jwtT, err := ParseToken(token, j.TokenSecret)
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusOK, gin.H{
 				"code":    mars.CodeFailedAuthVerify,
