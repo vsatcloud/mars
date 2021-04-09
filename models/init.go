@@ -16,7 +16,7 @@ var (
 )
 
 type Database struct {
-	Host         string `json:"host" required:"true" env:"PGDB_HOST"`
+	Host         string `json:"host" required:"true" env:"PGDB_ADDR"`
 	Port         string `json:"port" required:"true" env:"PGDB_PORT"`
 	User         string `json:"user" required:"true" env:"PGDB_USER"`
 	Dbname       string `json:"dbname" required:"true" env:"PGDB_DB_NAME"`
