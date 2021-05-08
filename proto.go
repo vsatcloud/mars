@@ -22,10 +22,12 @@ const (
 	CodeFailedAuthVerify = 10004 //身份验证失败
 	CodeRecordExists     = 10005 //记录已存在
 	CodeNoPerm           = 10006 //没有权限
+	CodeNotFound         = 10007 //没有找到
 )
 
 var CodeMsg = map[int]string{
 	CodeSuccess:   "Success",
 	CodeErrSystem: "系统错误",
 	CodeErrParams: "参数错误",
+	CodeNotFound:  "资源不存在",
 }

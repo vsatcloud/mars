@@ -71,3 +71,7 @@ func (c *Context) SystemError(err error) {
 func (c *Context) SetData(data interface{}) {
 	c.Result.Data = data
 }
+
+func (c *Context) SetCode(code int) {
+	c.Result.Code = code
+}
