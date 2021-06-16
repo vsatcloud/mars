@@ -23,11 +23,13 @@ const (
 	CodeRecordExists     = 10005 //记录已存在
 	CodeNoPerm           = 10006 //没有权限
 	CodeNotFound         = 10007 //没有找到
+	CodeTokenExpired     = 10008 //身份过期
 )
 
 var CodeMsg = map[int]string{
-	CodeSuccess:   "Success",
-	CodeErrSystem: "系统错误",
-	CodeErrParams: "参数错误",
-	CodeNotFound:  "资源不存在",
+	CodeSuccess:      "Success",
+	CodeErrSystem:    "系统错误",
+	CodeErrParams:    "参数错误",
+	CodeNotFound:     "资源不存在",
+	CodeTokenExpired: "身份已过期，请重新登录",
 }

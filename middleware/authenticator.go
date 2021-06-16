@@ -3,6 +3,7 @@ package middleware
 import (
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
@@ -49,17 +50,30 @@ func (j *Auth) Authenticator() gin.HandlerFunc {
 		claims := jwtT.Claims.(jwt.MapClaims)
 		userID := uint(claims["user_id"].(float64))
 
+		//token过期
+		expiredAt := int64(claims["expired_at"].(float64))
+		if time.Unix(expiredAt, 0).Before(time.Now()) {
+			c.AbortWithStatusJSON(http.StatusOK, gin.H{
+				"code":    mars.CodeTokenExpired,
+				"message": mars.CodeMsg[mars.CodeTokenExpired],
+			})
+			return
+		}
+
 		c.Set("user_id", userID)
 		c.Next()
 	}
 }
 
 //生成token
-func generateToken(data map[string]interface{}, secret string) (string, error) {
+func GenerateToken(data map[string]interface{}, secret string) (string, error) {
 	token := jwt.New(jwt.SigningMethodHS256)
 	for key, value := range data {
 		token.Claims.(jwt.MapClaims)[key] = value
 	}
+	//设置token过期时间
+	token.Claims.(jwt.MapClaims)["expired_at"] = time.Now().Add(time.Hour * 24 * 7).Unix()
+
 	return token.SignedString([]byte(secret))
 }
 
