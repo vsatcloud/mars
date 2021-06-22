@@ -37,8 +37,8 @@ func Casbin(db models.Database) *casbin.SyncedEnforcer {
 	once.Do(func() {
 		a, _ := gormadapter.NewAdapter("postgresql", db.User+":"+db.Password+"@("+db.Host+")/"+db.Dbname, true)
 		m := casbin.NewModel(modelText)
-		e := casbin.NewSyncedEnforcer(m, a)
-		e.AddFunction("ParamsMatch", ParamsMatchFunc)
+		syncedEnforcer = casbin.NewSyncedEnforcer(m, a)
+		syncedEnforcer.AddFunction("ParamsMatch", ParamsMatchFunc)
 	})
 	_ = syncedEnforcer.LoadPolicy()
 	return syncedEnforcer
