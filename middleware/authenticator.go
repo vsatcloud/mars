@@ -49,6 +49,7 @@ func (j *Auth) Authenticator() gin.HandlerFunc {
 
 		claims := jwtT.Claims.(jwt.MapClaims)
 		userID := uint(claims["user_id"].(float64))
+		c.Set("user_id", userID)
 
 		//token过期
 		expiredAt := int64(claims["expired_at"].(float64))
@@ -60,7 +61,10 @@ func (j *Auth) Authenticator() gin.HandlerFunc {
 			return
 		}
 
-		c.Set("user_id", userID)
+		//权限设置
+		authorityID := claims["authority_id"].(string)
+		c.Set("authority_id", authorityID)
+
 		c.Next()
 	}
 }
