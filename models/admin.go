@@ -1,7 +1,7 @@
 package models
 
 import (
-	"github.com/vsatcloud/mars/middleware"
+	"github.com/vsatcloud/mars/utils"
 	"gorm.io/gorm"
 )
 
@@ -22,5 +22,5 @@ func (am *AdminModel) GenToken(secret string) (string, error) {
 		"created_at":   am.CreatedAt.Unix(),
 	}
 
-	return middleware.GenerateToken(data, secret)
+	return utils.GenerateToken(data, secret)
 }
