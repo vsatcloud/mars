@@ -1,6 +1,7 @@
 package casbin
 
 import (
+	"errors"
 	"strings"
 	"sync"
 
@@ -54,4 +55,23 @@ func ParamsMatchFunc(args ...interface{}) (interface{}, error) {
 	name2 := args[1].(string)
 
 	return ParamsMatch(name1, name2), nil
+}
+
+func UpdateCasbin(db models.Database, authorityId string, authorityID, path, method string) error {
+	ClearCasbin(db, 0, authorityId)
+	rules := [][]string{}
+	rules = append(rules, []string{authorityID, path, method})
+	e := Casbin(db)
+	success := e.AddPolicy(rules)
+	if success == false {
+		return errors.New("存在相同api,添加失败,请联系管理员")
+	}
+	return nil
+}
+
+func ClearCasbin(db models.Database, v int, p ...string) bool {
+	e := Casbin(db)
+	success := e.RemoveFilteredPolicy(v, p...)
+	return success
+
 }
