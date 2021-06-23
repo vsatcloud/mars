@@ -6,8 +6,9 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/casbin/casbin"
-	"github.com/casbin/casbin/util"
+	"github.com/casbin/casbin/v2"
+	"github.com/casbin/casbin/v2/model"
+	"github.com/casbin/casbin/v2/util"
 	gormadapter "github.com/casbin/gorm-adapter/v3"
 	"github.com/vsatcloud/mars/models"
 )
@@ -38,8 +39,8 @@ func Casbin(db models.Database) *casbin.SyncedEnforcer {
 	once.Do(func() {
 		dsn := fmt.Sprintf("host=%s user=%s password=%s port=%s dbname=%s sslmode=disable", db.Host, db.User, db.Password, db.Port, db.Dbname)
 		a, _ := gormadapter.NewAdapter("postgres", dsn, true)
-		m := casbin.NewModel(modelText)
-		syncedEnforcer = casbin.NewSyncedEnforcer(m, *a)
+		m, _ := model.NewModelFromString(modelText)
+		syncedEnforcer, _ = casbin.NewSyncedEnforcer(m, *a)
 		syncedEnforcer.AddFunction("ParamsMatch", ParamsMatchFunc)
 	})
 	_ = syncedEnforcer.LoadPolicy()
@@ -64,7 +65,7 @@ func UpdateCasbin(db models.Database, authorityId string, authorityID, path, met
 	rules := [][]string{}
 	rules = append(rules, []string{authorityID, path, method})
 	e := Casbin(db)
-	success := e.AddPolicy(rules)
+	success, _ := e.AddPolicy(rules)
 	if success == false {
 		return errors.New("存在相同api,添加失败,请联系管理员")
 	}
@@ -73,7 +74,7 @@ func UpdateCasbin(db models.Database, authorityId string, authorityID, path, met
 
 func ClearCasbin(db models.Database, v int, p ...string) bool {
 	e := Casbin(db)
-	success := e.RemoveFilteredPolicy(v, p...)
+	success, _ := e.RemoveFilteredPolicy(v, p...)
 	return success
 
 }

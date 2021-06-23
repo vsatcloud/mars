@@ -4,7 +4,6 @@ go 1.16
 
 require (
 	github.com/astaxie/beego v1.12.3
-	github.com/casbin/casbin v1.7.0
 	github.com/casbin/casbin/v2 v2.23.4 // indirect
 	github.com/casbin/gorm-adapter/v3 v3.2.0
 	github.com/denisenkom/go-mssqldb v0.9.0 // indirect
