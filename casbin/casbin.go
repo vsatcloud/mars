@@ -65,7 +65,7 @@ func UpdateCasbin(db models.Database, authorityId string, authorityID, path, met
 	rules := [][]string{}
 	rules = append(rules, []string{authorityID, path, method})
 	e := Casbin(db)
-	success, _ := e.AddPolicy(rules)
+	success, _ := e.AddPolicies(rules)
 	if success == false {
 		return errors.New("存在相同api,添加失败,请联系管理员")
 	}
