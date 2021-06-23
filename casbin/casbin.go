@@ -2,15 +2,15 @@ package casbin
 
 import (
 	"errors"
-	"fmt"
 	"strings"
 	"sync"
+
+	"gorm.io/gorm"
 
 	"github.com/casbin/casbin/v2"
 	"github.com/casbin/casbin/v2/model"
 	"github.com/casbin/casbin/v2/util"
 	gormadapter "github.com/casbin/gorm-adapter/v3"
-	"github.com/vsatcloud/mars/models"
 )
 
 const modelText = `
@@ -35,12 +35,12 @@ var (
 	once           sync.Once
 )
 
-func Casbin(db models.Database) *casbin.SyncedEnforcer {
+func Casbin(db *gorm.DB) *casbin.SyncedEnforcer {
 	once.Do(func() {
-		dsn := fmt.Sprintf("host=%s user=%s password=%s port=%s dbname=%s sslmode=disable", db.Host, db.User, db.Password, db.Port, db.Dbname)
-		a, _ := gormadapter.NewAdapter("postgres", dsn, true)
+		//dsn := fmt.Sprintf("hoast=%s user=%s password=%s port=%s dbname=%s sslmode=disable", db.Host, db.User, db.Password, db.Port, db.Dbname)
+		a, _ := gormadapter.NewAdapterByDB(db)
 		m, _ := model.NewModelFromString(modelText)
-		syncedEnforcer, _ = casbin.NewSyncedEnforcer(m, *a)
+		syncedEnforcer, _ = casbin.NewSyncedEnforcer(m, a)
 		syncedEnforcer.AddFunction("ParamsMatch", ParamsMatchFunc)
 	})
 	_ = syncedEnforcer.LoadPolicy()
@@ -60,7 +60,7 @@ func ParamsMatchFunc(args ...interface{}) (interface{}, error) {
 	return ParamsMatch(name1, name2), nil
 }
 
-func UpdateCasbin(db models.Database, authorityID, path, method string) error {
+func UpdateCasbin(db *gorm.DB, authorityID, path, method string) error {
 	ClearCasbin(db, 0, authorityID)
 	rules := [][]string{}
 	rules = append(rules, []string{authorityID, path, method})
@@ -72,7 +72,7 @@ func UpdateCasbin(db models.Database, authorityID, path, method string) error {
 	return nil
 }
 
-func ClearCasbin(db models.Database, v int, p ...string) bool {
+func ClearCasbin(db *gorm.DB, v int, p ...string) bool {
 	e := Casbin(db)
 	success, _ := e.RemoveFilteredPolicy(v, p...)
 	return success
