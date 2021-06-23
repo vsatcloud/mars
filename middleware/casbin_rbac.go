@@ -3,13 +3,14 @@ package middleware
 import (
 	"net/http"
 
+	"gorm.io/gorm"
+
 	"github.com/gin-gonic/gin"
 	"github.com/vsatcloud/mars"
 	"github.com/vsatcloud/mars/casbin"
-	"github.com/vsatcloud/mars/models"
 )
 
-func CasbinRBAC(db models.Database) gin.HandlerFunc {
+func CasbinRBAC(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		authorityID, _ := c.Get("authority_id")
 		// 获取请求的URI
