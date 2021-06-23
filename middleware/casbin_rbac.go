@@ -20,7 +20,7 @@ func CasbinRBAC(db models.Database) gin.HandlerFunc {
 		sub := authorityID.(string)
 		e := casbin.Casbin(db)
 		// 判断策略中是否存在
-		success := e.Enforce(sub, obj, act)
+		success, _ := e.Enforce(sub, obj, act)
 		if success {
 			c.Next()
 		} else {
