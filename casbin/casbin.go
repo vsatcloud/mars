@@ -60,8 +60,8 @@ func ParamsMatchFunc(args ...interface{}) (interface{}, error) {
 	return ParamsMatch(name1, name2), nil
 }
 
-func UpdateCasbin(db models.Database, authorityId string, authorityID, path, method string) error {
-	ClearCasbin(db, 0, authorityId)
+func UpdateCasbin(db models.Database, authorityID, path, method string) error {
+	ClearCasbin(db, 0, authorityID)
 	rules := [][]string{}
 	rules = append(rules, []string{authorityID, path, method})
 	e := Casbin(db)
