@@ -39,7 +39,7 @@ func Casbin(db models.Database) *casbin.SyncedEnforcer {
 		dsn := fmt.Sprintf("host=%s user=%s password=%s port=%s dbname=%s sslmode=disable", db.Host, db.User, db.Password, db.Port, db.Dbname)
 		a, _ := gormadapter.NewAdapter("postgres", dsn, true)
 		m := casbin.NewModel(modelText)
-		syncedEnforcer = casbin.NewSyncedEnforcer(m, a)
+		syncedEnforcer = casbin.NewSyncedEnforcer(m, *a)
 		syncedEnforcer.AddFunction("ParamsMatch", ParamsMatchFunc)
 	})
 	_ = syncedEnforcer.LoadPolicy()
