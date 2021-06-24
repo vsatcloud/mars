@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"net/http"
+	"strings"
 
 	"gorm.io/gorm"
 
@@ -10,8 +11,24 @@ import (
 	"github.com/vsatcloud/mars/casbin"
 )
 
-func CasbinRBAC(db *gorm.DB) gin.HandlerFunc {
+type Casbin struct {
+	Db       *gorm.DB
+	SkipList []string // ["GET /api/v1/user/login", ...]
+
+}
+
+func (cas *Casbin) CasbinRBAC() gin.HandlerFunc {
 	return func(c *gin.Context) {
+		// 跳过
+		for _, item := range cas.SkipList {
+			routes := strings.Split(item, " ")
+			if strings.Contains(c.Request.URL.Path, routes[1]) && c.Request.Method == routes[0] {
+				c.Next()
+				return
+			}
+
+		}
+
 		authorityID, _ := c.Get("authority_id")
 		// 获取请求的URI
 		obj := c.Request.URL.RequestURI()
@@ -19,7 +36,7 @@ func CasbinRBAC(db *gorm.DB) gin.HandlerFunc {
 		act := c.Request.Method
 		// 获取用户的角色
 		sub := authorityID.(string)
-		e := casbin.Casbin(db)
+		e := casbin.Casbin(cas.Db)
 		// 判断策略中是否存在
 		success, _ := e.Enforce(sub, obj, act)
 		if success {
