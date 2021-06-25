@@ -78,3 +78,20 @@ func ClearCasbin(db *gorm.DB, v int, p ...string) bool {
 	return success
 
 }
+
+type CasbinInfo struct {
+	Path   string
+	Method string
+}
+
+func GetPolicyPathByAuthorityId(db *gorm.DB, authorityID string) (pathMaps []CasbinInfo) {
+	e := Casbin(db)
+	list := e.GetFilteredPolicy(0, authorityID)
+	for _, v := range list {
+		pathMaps = append(pathMaps, CasbinInfo{
+			Path:   v[1],
+			Method: v[2],
+		})
+	}
+	return pathMaps
+}

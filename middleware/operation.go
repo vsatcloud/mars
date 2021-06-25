@@ -59,6 +59,11 @@ func OperationRecord() gin.HandlerFunc {
 		record.Latency = latency
 		record.Resp = writer.body.String()
 
+		value, exists := c.Get("user_id")
+		if exists {
+			record.UserID = value.(uint)
+		}
+
 		if err := record.Save(); err != nil {
 			log.Warn().Msg("create operation record error:" + err.Error())
 		}
