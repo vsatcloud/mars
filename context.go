@@ -5,6 +5,8 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/vsatcloud/mars/proto"
+
 	"github.com/astaxie/beego/validation"
 	"github.com/gin-gonic/gin"
 	"github.com/mcuadros/go-defaults"
@@ -13,7 +15,7 @@ import (
 
 type Context struct {
 	*gin.Context
-	Result Result
+	Result proto.Result
 	Err    error
 }
 
@@ -27,7 +29,7 @@ func (c *Context) BindParams(obj interface{}) error {
 		c.Err = c.ShouldBind(obj)
 	}
 	if c.Err != nil {
-		c.Result.Code = CodeErrParams
+		c.Result.Code = proto.CodeErrParams
 		return c.Err
 	}
 
@@ -35,7 +37,7 @@ func (c *Context) BindParams(obj interface{}) error {
 	var b bool
 	b, c.Err = valid.Valid(obj)
 	if c.Err != nil {
-		c.Result.Code = CodeErrParams
+		c.Result.Code = proto.CodeErrParams
 		return nil
 	}
 	if !b {
@@ -45,7 +47,7 @@ func (c *Context) BindParams(obj interface{}) error {
 				errstrs = append(errstrs, err.Field+" "+err.String())
 			}
 
-			c.Result.Code = CodeErrParams
+			c.Result.Code = proto.CodeErrParams
 			return errors.New(strings.Join(errstrs, ";"))
 		}
 	}
@@ -57,14 +59,14 @@ func (c *Context) BindParams(obj interface{}) error {
 
 func (c *Context) ResponseJson() {
 	if c.Result.Message == "" {
-		c.Result.Message = CodeMsg[c.Result.Code]
+		c.Result.Message = proto.CodeMsg[c.Result.Code]
 	}
 	c.JSON(http.StatusOK, c.Result)
 }
 
 func (c *Context) SystemError(err error) {
 	c.Err = err
-	c.Result.Code = CodeErrSystem
+	c.Result.Code = proto.CodeErrSystem
 	c.Result.Detail = c.Err.Error()
 }
 

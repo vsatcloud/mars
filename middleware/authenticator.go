@@ -5,11 +5,12 @@ import (
 	"strings"
 	"time"
 
+	"github.com/vsatcloud/mars/proto"
+
 	"github.com/vsatcloud/mars/utils"
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
-	"github.com/vsatcloud/mars"
 )
 
 type Auth struct {
@@ -32,7 +33,7 @@ func (j *Auth) Authenticator() gin.HandlerFunc {
 		tokenBearer := c.Request.Header.Get("Authorization")
 		if len(tokenBearer) == 0 || !strings.HasPrefix(tokenBearer, "Bearer ") {
 			c.AbortWithStatusJSON(http.StatusOK, gin.H{
-				"code":    mars.CodeFailedAuthVerify,
+				"code":    proto.CodeFailedAuthVerify,
 				"message": "身份验证失败",
 			})
 			return
@@ -43,7 +44,7 @@ func (j *Auth) Authenticator() gin.HandlerFunc {
 		jwtT, err := utils.ParseToken(token, j.TokenSecret)
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusOK, gin.H{
-				"code":    mars.CodeFailedAuthVerify,
+				"code":    proto.CodeFailedAuthVerify,
 				"message": "身份验证失败",
 			})
 			return
@@ -57,8 +58,8 @@ func (j *Auth) Authenticator() gin.HandlerFunc {
 		expiredAt := int64(claims["expired_at"].(float64))
 		if time.Unix(expiredAt, 0).Before(time.Now()) {
 			c.AbortWithStatusJSON(http.StatusOK, gin.H{
-				"code":    mars.CodeTokenExpired,
-				"message": mars.CodeMsg[mars.CodeTokenExpired],
+				"code":    proto.CodeTokenExpired,
+				"message": proto.CodeMsg[proto.CodeTokenExpired],
 			})
 			return
 		}

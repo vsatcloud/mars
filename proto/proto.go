@@ -1,4 +1,4 @@
-package mars
+package proto
 
 //Pagination 分页
 type Pagination struct {

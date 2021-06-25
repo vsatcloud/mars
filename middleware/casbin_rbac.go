@@ -4,10 +4,11 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/vsatcloud/mars/proto"
+
 	"gorm.io/gorm"
 
 	"github.com/gin-gonic/gin"
-	"github.com/vsatcloud/mars"
 	"github.com/vsatcloud/mars/casbin"
 )
 
@@ -43,8 +44,8 @@ func (cas *Casbin) CasbinRBAC() gin.HandlerFunc {
 			c.Next()
 		} else {
 			c.AbortWithStatusJSON(http.StatusOK, gin.H{
-				"code":    mars.CodeNoPerm,
-				"message": mars.CodeMsg[mars.CodeNoPerm],
+				"code":    proto.CodeNoPerm,
+				"message": proto.CodeMsg[proto.CodeNoPerm],
 			})
 			return
 		}
