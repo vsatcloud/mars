@@ -60,10 +60,10 @@ func ParamsMatchFunc(args ...interface{}) (interface{}, error) {
 	return ParamsMatch(name1, name2), nil
 }
 
-func UpdateCasbin(db *gorm.DB, authorityID, path, method string) error {
-	ClearCasbin(db, 0, authorityID)
+func UpdateCasbin(db *gorm.DB, roles, path, method string) error {
+	ClearCasbin(db, 0, roles)
 	rules := [][]string{}
-	rules = append(rules, []string{authorityID, path, method})
+	rules = append(rules, []string{roles, path, method})
 	e := Casbin(db)
 	success, _ := e.AddPolicies(rules)
 	if success == false {
@@ -84,9 +84,9 @@ type CasbinInfo struct {
 	Method string
 }
 
-func GetPolicyPathByAuthorityId(db *gorm.DB, authorityID string) (pathMaps []CasbinInfo) {
+func GetPolicyPathByRoles(db *gorm.DB, roles string) (pathMaps []CasbinInfo) {
 	e := Casbin(db)
-	list := e.GetFilteredPolicy(0, authorityID)
+	list := e.GetFilteredPolicy(0, roles)
 	for _, v := range list {
 		pathMaps = append(pathMaps, CasbinInfo{
 			Path:   v[1],

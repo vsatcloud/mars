@@ -65,8 +65,8 @@ func (j *Auth) Authenticator() gin.HandlerFunc {
 		}
 
 		//权限设置
-		authorityID := claims["authority_id"].(string)
-		c.Set("authority_id", authorityID)
+		roles := claims["roles"].(string)
+		c.Set("roles", roles)
 
 		c.Next()
 	}
