@@ -27,10 +27,11 @@ const (
 )
 
 var CodeMsg = map[int]string{
-	CodeSuccess:      "Success",
-	CodeErrSystem:    "系统错误",
-	CodeErrParams:    "参数错误",
-	CodeNoPerm:       "没有权限",
-	CodeNotFound:     "资源不存在",
-	CodeTokenExpired: "身份已过期，请重新登录",
+	CodeSuccess:          "Success",
+	CodeErrSystem:        "系统错误",
+	CodeErrParams:        "参数错误",
+	CodeFailedAuthVerify: "身份验证失败，请重新登录",
+	CodeNoPerm:           "没有权限",
+	CodeNotFound:         "资源不存在",
+	CodeTokenExpired:     "身份已过期，请重新登录",
 }
