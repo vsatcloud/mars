@@ -15,19 +15,19 @@ import (
 
 const modelText = `
 [request_definition]
-r = sub, obj, act
+r = sub, dom, obj, act
 
 [policy_definition]
-p = sub, obj, act
+p = sub, dom, obj, act
 
 [role_definition]
-g = _, _
+g = _, _, _
 
 [policy_effect]
 e = some(where (p.eft == allow))
 
 [matchers]
-m = g(r.sub, p.sub) && r.obj == p.obj && r.act == p.act || r.sub == "admin"
+m = g(r.sub, p.sub, r.dom) && r.dom == p.dom && r.obj == p.obj && r.act == p.act || r.sub == "admin"
 `
 
 var (
@@ -60,10 +60,10 @@ func ParamsMatchFunc(args ...interface{}) (interface{}, error) {
 	return ParamsMatch(name1, name2), nil
 }
 
-func UpdateCasbin(db *gorm.DB, roles, path, method string) error {
+func UpdateCasbin(db *gorm.DB, roles, domain, path, method string) error {
 	ClearCasbin(db, 0, roles)
 	rules := [][]string{}
-	rules = append(rules, []string{roles, path, method})
+	rules = append(rules, []string{roles, domain, path, method})
 	e := Casbin(db)
 	success, _ := e.AddPolicies(rules)
 	if success == false {

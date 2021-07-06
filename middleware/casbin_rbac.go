@@ -18,7 +18,7 @@ type Casbin struct {
 
 }
 
-func (cas *Casbin) CasbinRBAC() gin.HandlerFunc {
+func (cas *Casbin) CasbinRBAC(domain string) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// 跳过
 		for _, item := range cas.SkipList {
@@ -39,7 +39,7 @@ func (cas *Casbin) CasbinRBAC() gin.HandlerFunc {
 		sub := roles.(string)
 		e := casbin.Casbin(cas.Db)
 		// 判断策略中是否存在
-		success, _ := e.Enforce(sub, obj, act)
+		success, _ := e.Enforce(sub, domain, obj, act)
 		if success {
 			c.Next()
 		} else {
