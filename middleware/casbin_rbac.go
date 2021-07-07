@@ -32,7 +32,7 @@ func (cas *Casbin) CasbinRBAC(domain string) gin.HandlerFunc {
 
 		roles, _ := c.Get("roles")
 		// 获取请求的URI
-		obj := c.Request.URL.RequestURI()
+		obj := c.Request.URL.Path
 		// 获取请求方法
 		act := c.Request.Method
 		// 获取用户的角色
