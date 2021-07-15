@@ -24,7 +24,10 @@ func (c *Context) BindParams(obj interface{}) error {
 
 	contentType := c.ContentType()
 	if contentType == "application/json" {
-		c.Err = c.ShouldBindJSON(obj)
+		if c.Request.ContentLength > 0 {
+			c.Err = c.ShouldBindJSON(obj)
+		}
+
 	} else {
 		c.Err = c.ShouldBind(obj)
 	}
