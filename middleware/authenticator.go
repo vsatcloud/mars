@@ -16,6 +16,7 @@ import (
 type Auth struct {
 	TokenSecret string
 	SkipList    []string // ["GET /api/v1/user/login", ...]
+	HeaderKey   string
 }
 
 func (j *Auth) Authenticator() gin.HandlerFunc {
@@ -30,7 +31,12 @@ func (j *Auth) Authenticator() gin.HandlerFunc {
 
 		}
 
-		tokenBearer := c.Request.Header.Get("Authorization")
+		key := "Authorization"
+		if j.HeaderKey != "" {
+			key = j.HeaderKey
+		}
+
+		tokenBearer := c.Request.Header.Get(key)
 		if len(tokenBearer) == 0 || !strings.HasPrefix(tokenBearer, "Bearer ") {
 			c.AbortWithStatusJSON(http.StatusOK, gin.H{
 				"code":    proto.CodeFailedAuthVerify,
