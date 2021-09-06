@@ -35,6 +35,17 @@ type Result struct {
 	Detail  string      `json:"detail"`
 }
 
+type ResultList struct {
+	Code    int    `json:"code"`    // return code, 0 for succ
+	Message string `json:"message"` // message
+	Data    struct {
+		Count int64         `json:"count"`
+		Items []interface{} `json:"items"`
+		Pagination
+	} `json:"data"` // data object
+	Detail string `json:"detail"`
+}
+
 const (
 	CodeSuccess          = 0
 	CodeErrSystem        = 10001 //系统错误
@@ -49,10 +60,10 @@ const (
 
 var CodeMsg = map[int]string{
 	CodeSuccess:          "Success",
-	CodeErrSystem:        "系统错误",
+	CodeErrSystem:        "系统内部错误，请联系相关人员",
 	CodeErrParams:        "参数错误",
 	CodeFailedAuthVerify: "身份验证失败，请重新登录",
-	CodeNoPerm:           "没有权限",
+	CodeNoPerm:           "没有访问权限，请联系相关人员",
 	CodeNotFound:         "资源不存在",
 	CodeTokenExpired:     "身份已过期，请重新登录",
 }
