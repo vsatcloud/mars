@@ -3,7 +3,28 @@ package proto
 //Pagination 分页
 type Pagination struct {
 	Page  int `form:"page" default:"1" json:"page"`
-	Limit int `form:"limit" default:"10" json:"limit"`
+	Limit int `form:"limit" default:"10" json:"limit"` //逐步弃用
+	Size  int `form:"size" default:"10" json:"size"`
+}
+
+func (p *Pagination) Offset() int {
+	if p.Page <= 0 {
+		return -1 //cancel offset
+	}
+
+	if p.Size != 0 && p.Size != 10 {
+		p.Limit = p.Size
+	}
+
+	return (p.Page - 1) * p.Limit
+}
+
+func (p *Pagination) Limiter() int {
+	if p.Limit <= 0 {
+		return -1
+	}
+
+	return p.Limit
 }
 
 // Result represents HTTP response body.
