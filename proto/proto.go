@@ -2,9 +2,12 @@ package proto
 
 //Pagination 分页
 type Pagination struct {
-	Page  int `form:"page" default:"1" json:"page"`
+	//页码 从1开始
+	Page int `form:"page" default:"1" json:"page"`
+	//兼容字段-勿用，请使用size字段
 	Limit int `form:"limit" default:"10" json:"limit"` //逐步弃用
-	Size  int `form:"size" default:"10" json:"size"`
+	//每页的数量
+	Size int `form:"size" default:"10" json:"size"`
 }
 
 func (p *Pagination) Offset() int {
