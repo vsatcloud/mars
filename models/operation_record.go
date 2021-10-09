@@ -33,7 +33,7 @@ type OperationRecordListArgs struct {
 
 func OperationRecordList(args *OperationRecordListArgs) (list []OperationRecord, count int64, err error) {
 	query := db.Model(&OperationRecord{})
-	query = query.Count(&count).Offset(Offset(args.Page, args.Limit)).Limit(Limit(args.Limit)).Scan(&list)
+	query = query.Count(&count).Offset(Offset(args.Page, args.Limit)).Order("created_at desc").Limit(Limit(args.Limit)).Scan(&list)
 	err = query.Error
 	return
 }
