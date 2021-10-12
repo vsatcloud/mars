@@ -77,3 +77,8 @@ func (c *Context) SetData(data interface{}) {
 func (c *Context) SetCode(code int) {
 	c.Result.Code = code
 }
+
+func (c *Context) LogicError(msg string) {
+	c.Result.Code = proto.CodeErrLogic
+	c.Result.Message = msg
+}
