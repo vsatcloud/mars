@@ -32,7 +32,7 @@ func OperationRecord() gin.HandlerFunc {
 		}
 
 		record := models.OperationRecord{
-			Ip:     c.ClientIP(),
+			Ip:     c.GetHeader("X-Original-Forwarded-For"),
 			Method: c.Request.Method,
 			Path:   c.Request.URL.Path,
 			Agent:  c.Request.UserAgent(),
