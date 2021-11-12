@@ -2,6 +2,7 @@ package mars
 
 import (
 	"errors"
+	"io"
 	"net/http"
 	"strings"
 
@@ -25,6 +26,9 @@ func (c *Context) BindParams(obj interface{}) error {
 	contentType := c.ContentType()
 	if contentType == "application/json" && c.Request.ContentLength > 0 {
 		c.Err = c.ShouldBindJSON(obj)
+		if errors.Is(c.Err, io.EOF) {
+			return nil
+		}
 	} else {
 		c.Err = c.ShouldBind(obj)
 	}
@@ -70,15 +74,35 @@ func (c *Context) SystemError(err error) {
 	c.Result.Detail = c.Err.Error()
 }
 
-func (c *Context) SetData(data interface{}) {
+func (c *Context) SetData(data interface{}) error {
 	c.Result.Data = data
+	return nil
 }
 
-func (c *Context) SetCode(code int) {
+func (c *Context) RespOK(data interface{}) error {
+	c.Result.Data = data
+	return nil
+}
+
+func (c *Context) RespCode(code int) error {
 	c.Result.Code = code
+	return nil
 }
 
-func (c *Context) LogicError(msg string) {
+func (c *Context) RespMsg(msg string) error {
 	c.Result.Code = proto.CodeErrLogic
 	c.Result.Message = msg
+	return nil
+}
+
+func (c *Context) SetCode(code int) error {
+	c.Result.Code = code
+	return nil
+}
+
+func (c *Context) LogicError(msg string) error {
+	c.Result.Code = proto.CodeErrLogic
+	c.Result.Message = msg
+
+	return nil
 }

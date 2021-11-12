@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"bytes"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"time"
@@ -31,6 +32,7 @@ func OperationRecord() gin.HandlerFunc {
 			c.Request.Body = ioutil.NopCloser(bytes.NewBuffer(body))
 		}
 
+		fmt.Println(c.Request.Header)
 		record := models.OperationRecord{
 			Ip:     c.GetHeader("X-Forwarded-For"),
 			Method: c.Request.Method,
